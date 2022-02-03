@@ -16,8 +16,9 @@ class m220202_143949_create_transaction_table extends Migration
             'id' => $this->primaryKey(),
             'wallet_id' => $this->integer(11)->notNull()->comment('Wallet ID'),
             'transaction_type' => $this->tinyInteger(1)->notNull()->comment('Transaction type. 0 - Debit, 1 - Credit'),
-            'amount' => $this->float(9,2)->notNull()->comment('Transaction amount'),
+            'original_amount' => $this->float(9,2)->notNull()->comment('Original transaction amount'),
             'currency' => $this->tinyInteger(1)->notNull()->comment('Transaction currency. 0 - RUB, 1 - USD'),
+            'converted_amount' => $this->float(9,2)->notNull()->comment('Converted transaction amount'),
             'reason' => $this->tinyInteger(1)->notNull()->comment('Transaction reason. 0 - stock, 1 - refund, ...'),
             'created_at' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP')->comment('Transaction creation date/time'),
         ]);

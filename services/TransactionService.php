@@ -51,18 +51,24 @@ class TransactionService extends Model
 
         if ($this->load($params) && $this->validate()) {
 
-            $this->convertAmount($wallet);
+            $converted_amount = $this->convertAmount($wallet);
 
             if ($this->transaction_type == Transaction::TYPE_CREDIT) {
-                $this->amount = $this->amount * (-1);
+                $converted_amount = $converted_amount * (-1);
             }
 
-            $wallet->amount += $this->amount;
+
+
+            $wallet->amount += $converted_amount;
 
             if ($wallet->save()) {
 
+                unset($params['amount']);
+
                 $transaction = new Transaction($params);
                 $transaction->wallet_id = $wallet->id;
+                $transaction->original_amount = $this->amount;
+                $transaction->converted_amount = $converted_amount;
                 $transaction->save();
 
                 return true;
@@ -84,12 +90,14 @@ class TransactionService extends Model
      *
      * @param Wallet $wallet
      */
-    public function convertAmount(Wallet $wallet): void
+    public function convertAmount(Wallet $wallet): float
     {
+        $converted_amount = $this->amount;
         if ($this->currency != $wallet->currency) {
             $rate = $this->getConversionRate();
-            $this->amount *= $rate;
+            $converted_amount = $this->amount * $rate;
         }
+        return $converted_amount;
     }
 
     /**

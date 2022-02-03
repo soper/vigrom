@@ -26,9 +26,10 @@ class Transaction extends ActiveRecord
     public function rules()
     {
         return [
-            [['wallet_id', 'transaction_type', 'amount', 'currency', 'reason'], RequiredValidator::class],
+            [['wallet_id', 'transaction_type', 'original_amount', 'currency', 'converted_amount', 'reason'],
+        RequiredValidator::class],
             [['wallet_id', 'transaction_type', 'currency', 'reason'], NumberValidator::class, 'integerOnly' => true],
-            [['amount'], NumberValidator::class],
+            [['original_amount', 'converted_amount'], NumberValidator::class],
             [['currency'], RangeValidator::class, 'range' => [Wallet::CURRENCY_RUB, Wallet::CURRENCY_USD]],
             [['transaction_type'], RangeValidator::class, 'range' => [static::TYPE_DEBIT, static::TYPE_CREDIT]],
             [['reason'], RangeValidator::class, 'range' => [static::REASON_STOCK, static::REASON_REFUND]],
